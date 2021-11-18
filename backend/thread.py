@@ -10,7 +10,7 @@ class AnimeThread(Thread):
         self.streams = None
         super().__init__()
 
-    def load_stream(self,filename = "/home/stefan/develop/anime-backend/stream.json") -> dict:
+    def load_stream(self,filename = "/home/stefan/develop/anime/backend/stream.json") -> dict:
         job = None
         with open(filename,'r') as jfile:
             job = json.load(jfile)

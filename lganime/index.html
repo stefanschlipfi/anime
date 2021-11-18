@@ -41,7 +41,7 @@
 				console.log(streams)
 
 				var dummy = streams[device]
-				if (stream_url == undefined || stream_url != dummy){
+				if (stream_url == undefined || stream_url != dummy) {
 					stream_url = dummy
 					console.log("Stream changed, load new " + stream_url)
 					loadvideo(stream_url)
@@ -52,12 +52,18 @@
 
 		function loadvideo(url) {
 			var vid = document.getElementById('myVideo');
-			var source = document.createElement("source");
-			source.setAttribute('src', url);
-			// source.setAttribute('type','application/x-mpegurl');
+			var source = document.getElementById("mysource");
 
-			vid.appendChild(source);
-			vid.addEventListener("loadeddata", function (e) { loadeddata(30); }, false);
+			if (source == null) {
+				var source = document.createElement("source")
+				source.id = "mysource"
+				source.setAttribute('src', url);
+				vid.appendChild(source);
+
+			}else
+				source.setAttribute('src', url);
+			// source.setAttribute('type','application/x-mpegurl');
+			//vid.addEventListener("loadeddata", function (e) { loadeddata(30); }, false);
 			vid.load();
 		}
 
