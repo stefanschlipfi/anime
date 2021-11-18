@@ -1,4 +1,5 @@
 from flask import Flask,render_template
+from flask import request, jsonify
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'JdeEVd0uzGzjRxTC$DM2LKy!'
 
@@ -12,11 +13,42 @@ socketio = SocketIO(app,cors_allowed_origins='*',async_mode="threading")
 #import CPU Thread from thread.py
 from thread import AnimeThread
 
+from anime_search import MyAnime, AnimeSearch,Anime
+import json
 #Websocket old Way
 @app.route('/old/')
 def index():
     return render_template('index.html')
 
+
+anime = AnimeSearch()
+#Anime-Search API
+@app.route("/api/", methods=['GET'])
+def search():
+    keyword = request.args.get("search")
+    print(keyword)
+    animes = anime.search_animes(keyword)
+    myanimes = [json.loads(MyAnime(anime).toJSON()) for anime in animes]
+    return jsonify(myanimes)
+
+@app.route("/api/<anime_id>/",methods=['GET'])
+def get_episodes_count(anime_id):
+    dummy = Anime(anime_id, anime_id)
+    return jsonify(anime.get_episodes_count(dummy))
+
+@app.route("/api/<anime_id>/<episode>/",methods=['GET'])
+def set_video_url(anime_id,episode):
+    dummy = Anime(anime_id, anime_id)
+    video_url = anime.get_video_url(dummy, episode)
+    
+    device = request.args.get("device")
+    if not device:
+        return "Device get var needed"
+    else:
+        if (anime.set_video_url(video_url, device)):
+            return "Anime set on " + device
+
+# Anime Websocket for clients
 @socketio.on('connect', namespace='/anime')
 def test_connect():
     logging.debug("Connected with socket.io")
