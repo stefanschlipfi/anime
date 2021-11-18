@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<head>
+    <!-- CSS only -->
+    <title>Server TEMP Monitor</title>
+
+</head>
+
+<body>
+    <script src="//code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+        crossorigin="anonymous"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"
+        integrity="sha256-yr4fRk/GU1ehYJPAs8P4JlTgu0Hdsp4ZKrx8bDEDC3I=" crossorigin="anonymous"></script>
+
+
+    <video id="myVideo" controls="controls" autoplay width=640 height=360></video>
+
+
+    <script>
+
+        var socket = undefined;
+
+        $(document).ready(function () {
+
+            namespace = '/ws_sensors';
+            socket = io.connect(namespace);
+
+            socket.on('url', function (msg) {
+                console.log(msg)
+                loadvideo(msg)
+            });
+
+        });
+
+        function loadvideo(url) {
+            var vid = document.getElementById('myVideo');
+            var source = document.createElement("source");
+            source.setAttribute('src', url);
+            // source.setAttribute('type','application/x-mpegurl');
+
+            vid.appendChild(source);
+            vid.addEventListener("loadeddata", function (e) { loadeddata(30); }, false);
+            vid.load();
+        }
+
+        function loadeddata(start) {
+            var vid = document.getElementById('myVideo');
+            vid.currentTime = start;
+        }
+
+    </script>
+
+</body>

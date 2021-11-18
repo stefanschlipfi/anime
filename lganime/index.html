@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<style type="text/css">
+		body {
+			width: 100%;
+			height: 100%;
+			background-color: #202020;
+		}
+
+		div {
+			position: absolute;
+			height: 100%;
+			width: 100%;
+			display: table;
+		}
+
+		h1 {
+			display: table-cell;
+			vertical-align: middle;
+			text-align: center;
+			color: #FFFFFF;
+		}
+	</style>
+	<script src="webOSTVjs-1.2.0/webOSTV.js" charset="utf-8"></script>
+	<script src="socket.io.js" , charset="utf-8"></script>
+	<!--	<script src="webOSTVjs-1.2.0/webOSTV-dev.js" charset="utf-8"></script> -->
+	<script>
+
+		var socket = undefined;
+		var device = "living_room_tv"
+		var stream_url = undefined
+
+		function load() {
+
+			namespace = 'ws://jarvis.steinanet.at:5080/anime';
+			socket = io.connect(namespace);
+
+			socket.on('streams', function (streams) {
+				console.log(streams)
+
+				var dummy = streams[device]
+				if (stream_url == undefined || stream_url != dummy){
+					stream_url = dummy
+					console.log("Stream changed, load new " + stream_url)
+					loadvideo(stream_url)
+				}
+			});
+
+		};
+
+		function loadvideo(url) {
+			var vid = document.getElementById('myVideo');
+			var source = document.createElement("source");
+			source.setAttribute('src', url);
+			// source.setAttribute('type','application/x-mpegurl');
+
+			vid.appendChild(source);
+			vid.addEventListener("loadeddata", function (e) { loadeddata(30); }, false);
+			vid.load();
+		}
+
+		function loadeddata(start) {
+			var vid = document.getElementById('myVideo');
+			vid.currentTime = start;
+		}
+	</script>
+
+</head>
+
+<body onload="load()">
+	<video id="myVideo" controls="controls" autoplay width=640 height=360></video>
+</body>
+
+<!-- working sream 
+	<body>
+	
+	<video controls autoplay>
+		<source src="https://loadfast1.com/www08/5389aac31c41f666f74840b623eb7741/ep.1.1616527297.m3u8" type="video/mp4">
+	</video>
+
+</body>
+
+-->
+
+</html>
