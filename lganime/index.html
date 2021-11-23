@@ -34,7 +34,7 @@
 
 		function load() {
 
-			namespace = 'ws://jarvis.steinanet.at:5080/anime';
+			namespace = 'ws://homeserver.steinanet.at:7080/anime';
 			socket = io.connect(namespace);
 
 			socket.on('streams', function (streams) {

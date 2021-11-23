@@ -1,0 +1,9 @@
+[Unit]
+Description=Anime API / Websocket / Anime-cli Service
+
+[Service]
+Type=simple
+ExecStart=/bin/bash /opt/anime/run.sh
+
+[Install]
+WantedBy=multi-user.target
