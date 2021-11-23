@@ -1,5 +1,6 @@
 from anime_cli.anime import Anime
 from anime_cli.search import SearchApi
+from anime_cli.proxy_server import proxyServer
 from anime_cli.search.gogoanime import GogoAnime
 import json
 
@@ -15,6 +16,17 @@ class AnimeSearch():
     def __init__(self):
         self.searchApi = GogoAnime(mirror="pe")
         self.anime = None
+        self.serverAddress = ("0.0.0.0", 8081)
+
+    def run_server(self,searchApi, serverAddress):
+        """Run server function creates a server for the searchApi and runs it
+        Args:
+            searchApi: The api to create the proxy server for
+            serverAddress: The server address to bind the server to
+        """
+        server = proxyServer(searchApi.get_headers(), serverAddress)
+        server.serve_forever()
+        server.server_close()
 
     def search_animes(self,keyword: str) -> list:
         """
@@ -47,6 +59,7 @@ class AnimeSearch():
         with open(filename,'r') as jfile:
             streams = json.load(jfile)
 
+        video_url = f"http://jarvis.steinanet.at:{self.serverAddress[1]}/{video_url}"
         streams.update({device:video_url})
 
         with open(filename,'w') as jfile:

@@ -15,13 +15,28 @@ from thread import AnimeThread
 
 from anime_search import MyAnime, AnimeSearch,Anime
 import json
+import threading
+
+#start reverse proxy for setting headers
+anime = AnimeSearch()
+print(f"Starting proxy server on {anime.serverAddress}")
+server = threading.Thread(
+    target=anime.run_server,
+    args=(
+        anime.searchApi,
+        anime.serverAddress,
+    ),
+    daemon=True,
+)
+server.start()
+    
+
 #Websocket old Way
 @app.route('/old/')
 def index():
     return render_template('index.html')
 
 
-anime = AnimeSearch()
 #Anime-Search API
 @app.route("/api/", methods=['GET'])
 def search():
@@ -66,4 +81,4 @@ if __name__ == "__main__":
 
     socketio.run(app)
 
-    
+
