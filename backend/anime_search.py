@@ -4,8 +4,10 @@ from anime_cli.proxy_server import proxyServer
 from anime_cli.search.gogoanime import GogoAnime
 import json
 
+STREAMS_FILE = "/home/stefan/develop/anime/backend/stream.json"
+
 class MyAnime(Anime):
-    def __init__(self, anime: Anime):
+    def __init__(self, anime):
         self.id = anime.id
         self.title = anime.title
     
@@ -28,21 +30,21 @@ class AnimeSearch():
         server.serve_forever()
         server.server_close()
 
-    def search_animes(self,keyword: str) -> list:
+    def search_animes(self,keyword):
         """
         query keyword through searchApi 
         return list of Anime
         """
         return self.searchApi.search_anime(keyword)
 
-    def get_episodes_count(self,anime: Anime) -> int:
+    def get_episodes_count(self,anime):
         """
         get episodes count
         return int
         """
         return self.searchApi.get_episodes_count(anime)
     
-    def get_video_url(self,anime: Anime,episode: int) -> str:
+    def get_video_url(self,anime,episode):
         """
         get video stream url m3u8 from Anime
         return url
@@ -50,19 +52,18 @@ class AnimeSearch():
         embed_url = self.searchApi.get_embed_video(anime,episode)
         return self.searchApi.get_video_url(embed_url)
     
-    def set_video_url(self,video_url: str,device: str):
+    def set_video_url(self,video_url,device):
         """
         set video url in streams.json
         """
-        filename = "/home/stefan/develop/anime/backend/stream.json"
         streams = None
-        with open(filename,'r') as jfile:
+        with open(STREAMS_FILE,'r') as jfile:
             streams = json.load(jfile)
 
         video_url = f"http://jarvis.steinanet.at:{self.serverAddress[1]}/{video_url}"
         streams.update({device:video_url})
 
-        with open(filename,'w') as jfile:
+        with open(STREAMS_FILE,'w') as jfile:
             json.dump(streams, jfile)
 
         return True
