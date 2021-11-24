@@ -57,8 +57,13 @@ class AnimeSearch():
         set video url in streams.json
         """
         streams = None
-        with open(STREAMS_FILE,'r') as jfile:
-            streams = json.load(jfile)
+        try:
+            with open(STREAMS_FILE,'r') as jfile:
+                streams = json.load(jfile)
+        except FileNotFoundError:
+            streams = {}
+        except Exception as e:
+            raise e
 
         video_url = f"http://jarvis.steinanet.at:{self.serverAddress[1]}/{video_url}"
         streams.update({device:video_url})
